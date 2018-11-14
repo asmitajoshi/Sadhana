@@ -8,5 +8,12 @@ class TestISBNSearch(unittest.TestCase):
     isbnsearch = ISBNSearch.ISBNSearch(uri, path)    
     self.assertEqual( isbnsearch.search(None), 'skdj' )
 
+  def test_openlib(self):
+    #https://openlibrary.org/api/books?bibkeys=ISBN:0451526538
+    uri = 'openlibrary.org'
+    path = '/api/books?bibkeys=ISBN:'
+    isbnsearch = ISBNSearch.ISBNSearch(uri, path)    
+    self.assertEqual( isbnsearch.search('9781501183669'), 'skdj' )
+
 if __name__ == '__main__':
   unittest.main()
