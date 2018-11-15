@@ -15,5 +15,12 @@ class TestISBNSearch(unittest.TestCase):
     isbnsearch = ISBNSearch.ISBNSearch(uri, path)    
     self.assertEqual( isbnsearch.search('9781501183669'), 'skdj' )
 
+  def test_find_parser(self):
+    isbnsearch = ISBNSearch.ISBNSearch(None, None)
+    self.assertEqual( isbnsearch.find_parser('isbndb'), 'parseISBNDB' )
+    isbnsearch._setUri('openlibrary.org')
+    self.assertEqual( isbnsearch.find_parser('openlibrary'), 'parseOpenLibrary' )
+    isbnsearch._setUri('en.wikipedia.org')
+    self.assertEqual( isbnsearch.find_parser('owieur'), None )
 if __name__ == '__main__':
   unittest.main()

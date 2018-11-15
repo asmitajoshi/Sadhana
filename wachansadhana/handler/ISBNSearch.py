@@ -1,5 +1,6 @@
 import http.client
 import requests
+import re
 
 class ISBNSearch:
 
@@ -13,6 +14,17 @@ class ISBNSearch:
     else: self.path = path
     self.data = []
     self.conn = None
+    self.all_parsers = {'openlibrary': 'parseOpenLibrary', 'isbndb': 'parseISBNDB'}
+    self.parser = filter(lambda x: self.find_parser(x), list(self.all_parsers))
+
+  # set uri for testing
+  def _setUri(self, uri):
+    self.uri = uri
+
+  def find_parser(self, key):
+    p = re.compile('.*\.?' + key + '\..+')
+    m = p.match(self.uri)
+    return self.all_parsers[key] if m else None
 
   def open_connection(self):
     self.conn = http.client.HTTPSConnection(self.uri)
@@ -27,9 +39,8 @@ class ISBNSearch:
       response = self.conn.getresponse()
       print(response.status, response.reason)
       self.data = response.read()
-      print('response closed ' + str(response.closed))
-      #while not response.closed:
-        #self.data.append(response.read(200))
+      print(self.data)
+      self.parser      
     except requests.ConnectionError:
       print('Failed to connect')
       print(response.status, response.reason)
