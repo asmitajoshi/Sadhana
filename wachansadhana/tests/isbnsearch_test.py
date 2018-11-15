@@ -12,15 +12,27 @@ class TestISBNSearch(unittest.TestCase):
     #https://openlibrary.org/api/books?bibkeys=ISBN:0451526538
     uri = 'openlibrary.org'
     path = '/api/books?bibkeys=ISBN:'
-    isbnsearch = ISBNSearch.ISBNSearch(uri, path)    
-    self.assertEqual( isbnsearch.search('9781501183669'), 'skdj' )
+    isbnsearch = ISBNSearch.ISBNSearch(uri, path)
+    found = isbnsearch.search('9781501183669')
+    #self.assertEqual( found, 'skdj' )
+    print(found)
+    parsed = isbnsearch.parse(found)
+    print(parsed)
+    self.assertEqual( parsed, 'skdj' )
 
   def test_find_parser(self):
     isbnsearch = ISBNSearch.ISBNSearch(None, None)
-    self.assertEqual( isbnsearch.find_parser('isbndb'), 'parseISBNDB' )
+    self.assertEqual( type(isbnsearch.find_parser('isbndb')).__name__, 'ISBNDB' )
     isbnsearch._setUri('openlibrary.org')
-    self.assertEqual( isbnsearch.find_parser('openlibrary'), 'parseOpenLibrary' )
+    self.assertEqual( type(isbnsearch.find_parser('openlibrary')).__name__, 'OpenLibrary' )
     isbnsearch._setUri('en.wikipedia.org')
-    self.assertEqual( isbnsearch.find_parser('owieur'), None )
+    self.assertEqual( type(isbnsearch.find_parser('owieur')).__name__, 'NoneType' )
+
+    isbnsearch = ISBNSearch.ISBNSearch(None, None)
+    self.assertEqual( type(isbnsearch.find_parser_from_uri()).__name__, 'ISBNDB' )
+    isbnsearch._setUri('openlibrary.org')
+    self.assertEqual( type(isbnsearch.find_parser()).__name__, 'OpenLibrary' )
+    isbnsearch._setUri('en.wikipedia.org')
+    self.assertEqual( type(isbnsearch.find_parser()).__name__, 'NoneType' )
 if __name__ == '__main__':
   unittest.main()

@@ -1,6 +1,8 @@
 import http.client
 import requests
 import re
+from wachansadhana.parser.OpenLibrary import OpenLibrary
+from wachansadhana.parser.ISBNDB import ISBNDB
 
 class ISBNSearch:
 
@@ -14,12 +16,21 @@ class ISBNSearch:
     else: self.path = path
     self.data = []
     self.conn = None
-    self.all_parsers = {'openlibrary': 'parseOpenLibrary', 'isbndb': 'parseISBNDB'}
-    self.parser = filter(lambda x: self.find_parser(x), list(self.all_parsers))
-
+    self.parser = None
+    self.parser = self.find_parser_from_uri()
+    print('parser ' + type(self.parser).__name__)
   # set uri for testing
   def _setUri(self, uri):
     self.uri = uri
+
+  def find_parser_from_uri(self):
+    if not self.parser: self.parser = None
+    self.all_parsers = {'openlibrary': OpenLibrary(), 'isbndb': ISBNDB()}
+    for k, v in self.all_parsers.items():
+      p = re.compile('.*\.?' + k + '\..+')
+      m = p.match(self.uri)
+      if (m): self.parser = self.all_parsers[k]
+    return self.parser
 
   def find_parser(self, key):
     p = re.compile('.*\.?' + key + '\..+')
@@ -31,19 +42,17 @@ class ISBNSearch:
 
   def search(self, isbn):
     if self.data: return self.data# don't repeat requests
-    self.open_connection()
     try:
       if not isbn: isbn = self.default_test_isbn
-      #https://isbndb.com/search/books/9781501183669
-      self.conn.request('GET', self.path + isbn)
-      response = self.conn.getresponse()
-      print(response.status, response.reason)
-      self.data = response.read()
+      response = requests.get('https://' + self.uri + self.path + isbn)
+      print(response.text)
+      self.data = response.text
       print(self.data)
-      self.parser      
     except requests.ConnectionError:
       print('Failed to connect')
       print(response.status, response.reason)
-    finally:
-      self.conn.close()
     return self.data
+
+  def parse(self, data):
+    print('parser ' + str(self.parser))
+    return self.parser.parse(self.data)
