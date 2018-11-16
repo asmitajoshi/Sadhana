@@ -24,18 +24,12 @@ class ISBNSearch:
     self.uri = uri
 
   def find_parser_from_uri(self):
-    if not self.parser: self.parser = None
     self.all_parsers = {'openlibrary': OpenLibrary(), 'isbndb': ISBNDB()}
     for k, v in self.all_parsers.items():
       p = re.compile('.*\.?' + k + '\..+')
       m = p.match(self.uri)
       if (m): self.parser = self.all_parsers[k]
     return self.parser
-
-  def find_parser(self, key):
-    p = re.compile('.*\.?' + key + '\..+')
-    m = p.match(self.uri)
-    return self.all_parsers[key] if m else None
 
   def open_connection(self):
     self.conn = http.client.HTTPSConnection(self.uri)

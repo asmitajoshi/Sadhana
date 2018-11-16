@@ -22,17 +22,10 @@ class TestISBNSearch(unittest.TestCase):
 
   def test_find_parser(self):
     isbnsearch = ISBNSearch.ISBNSearch(None, None)
-    self.assertEqual( type(isbnsearch.find_parser('isbndb')).__name__, 'ISBNDB' )
-    isbnsearch._setUri('openlibrary.org')
-    self.assertEqual( type(isbnsearch.find_parser('openlibrary')).__name__, 'OpenLibrary' )
-    isbnsearch._setUri('en.wikipedia.org')
-    self.assertEqual( type(isbnsearch.find_parser('owieur')).__name__, 'NoneType' )
-
-    isbnsearch = ISBNSearch.ISBNSearch(None, None)
     self.assertEqual( type(isbnsearch.find_parser_from_uri()).__name__, 'ISBNDB' )
     isbnsearch._setUri('openlibrary.org')
-    self.assertEqual( type(isbnsearch.find_parser()).__name__, 'OpenLibrary' )
-    isbnsearch._setUri('en.wikipedia.org')
-    self.assertEqual( type(isbnsearch.find_parser()).__name__, 'NoneType' )
+    self.assertEqual( type(isbnsearch.find_parser_from_uri()).__name__, 'OpenLibrary' )
+    isbnsearch = ISBNSearch.ISBNSearch('en.wikipedia.org', None)
+    self.assertEqual( type(isbnsearch.find_parser_from_uri()).__name__, 'NoneType' )
 if __name__ == '__main__':
   unittest.main()
