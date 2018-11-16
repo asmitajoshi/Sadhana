@@ -6,7 +6,7 @@ class TestISBNSearch(unittest.TestCase):
     uri = 'en.wikipedia.org'
     path = '/wiki/Special:BookSources?isbn=9781501183669'
     isbnsearch = ISBNSearch.ISBNSearch(uri, path)    
-    self.assertEqual( isbnsearch.search(None), 'skdj' )
+    self.assertIsNotNone( isbnsearch.search(None) )
 
   def test_openlib(self):
     #https://openlibrary.org/api/books?bibkeys=ISBN:0451526538
@@ -18,7 +18,7 @@ class TestISBNSearch(unittest.TestCase):
     print(found)
     parsed = isbnsearch.parse(found)
     print(parsed)
-    self.assertEqual( parsed, 'skdj' )
+    self.assertEqual( parsed.get('title'), 'Ship of Fools' )
 
   def test_find_parser(self):
     isbnsearch = ISBNSearch.ISBNSearch(None, None)
