@@ -50,3 +50,7 @@ class ISBNSearch:
   def parse(self, data):
     print('parser ' + str(self.parser))
     return self.parser.parse(self.data)
+
+  def search_isbn(self, isbn):
+    raw_record = self.search(isbn)
+    return self.parse(raw_record)
